@@ -11,6 +11,7 @@
     "postversion": "git push && git push --tags && npm publish --access=public"
   },
   "dependencies": {
+    "@f/channel": "^1.0.0",
     "@koax/fork": "^0.3.0"
   },
   "devDependencies": {
