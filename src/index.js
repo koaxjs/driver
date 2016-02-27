@@ -8,14 +8,14 @@ import {fork} from '@koax/fork'
 /**
  * driver
  * @param {Function} fn subscriber
- * @return {Object} {next, drive} and drive functions
+ * @return {Object} {push, drive} and drive functions
  */
 
 function driver (fn) {
   let {take, put} = channel()
   fn && fn(put)
   return {
-    next: put,
+    push: put,
     drive: function * (listener) {
       return yield fork(drive(take, listener))
     }

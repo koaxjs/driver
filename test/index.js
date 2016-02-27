@@ -12,10 +12,10 @@ import koax, {interpreter} from 'koax'
 
 test('should work', (t) => {
   t.plan(2)
-  let {drive} = driver(next => {
-    next(1)
+  let {drive} = driver(push => {
+    push(1)
     setTimeout(function () {
-      next(2)
+      push(2)
     })
   })
 

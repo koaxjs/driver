@@ -18,7 +18,7 @@ Koax drivers. Drivers are very similar to observables. A `subscriber` push chang
 import driver from '@koax/driver'
 import bindUrl from 'bind-url'
 
-let subscriber = next => bindUrl(next)
+let subscriber = push => bindUrl(push)
 let {drive} = driver(subscriber)
 let listener = url => {type: 'CHANGE_URL', url}
 drive(listener)
@@ -29,15 +29,15 @@ drive(listener)
 
 ### driver(subscriber)
 
-- `subscriber` - a function with signature `subscriber(next)`. `next` receives the next value in the driver sequence.
+- `subscriber` - a function with signature `subscriber(push)`. `push` receives the next value in the driver sequence.
 
-**Returns:** {drive, next}
+**Returns:** {drive, push}
 
 ### drive(listener)
 
 - `listener` - an action creator
 
-### next(val)
+### push(val)
 
 - `val` - push val to `listener`
 
