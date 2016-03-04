@@ -3,7 +3,15 @@
  */
 
 import channel from '@f/channel'
+import identity from '@f/identity'
 import {fork} from '@koax/fork'
+
+/**
+ * Actions
+ */
+
+const BOOT = '@koax/driver/BOOT'
+const NEXT = '@koax/driver/NEXT'
 
 /**
  * driver
@@ -12,13 +20,25 @@ import {fork} from '@koax/fork'
  */
 
 function driver (fn) {
-  let {take, put} = channel()
-  fn && fn(put)
+  let {take: getDispatch, put: dispatch} = channel()
+  fn && fn(push)
   return {
-    push: put,
+    push,
     drive: function * (listener) {
-      return yield fork(drive(take, listener))
+      listener = listener || identity
+      return yield fork(drive(getDispatch, listener))
     }
+  }
+
+  function push (val) {
+    let {take: getRet, put: ret} = channel()
+    return dispatch([val, ret])
+      .then(function () {
+        return getRet()
+      })
+      .then(function (task) {
+        return task.done
+      })
   }
 }
 
@@ -28,11 +48,34 @@ function driver (fn) {
  * @param {Function} fn listener
  */
 
-function * drive (take, fn) {
+function * drive (getDispatch, fn) {
   while (true) {
-    let val = yield take()
-    yield fork(fn.bind(null, val))
+    let [val, ret] = yield getDispatch()
+    ret(yield fork(function * () {
+      return yield next(fn(val))
+    }))
   }
+}
+
+
+/**
+ * Next action creator
+ * @param  {Object}   action
+ * @return {Object}
+ */
+
+function next (action) {
+  return {type: NEXT, payload: action}
+}
+
+/**
+ * Boot action creator
+ * @param {Object} ctx
+ * @return {Object}
+ */
+
+function boot (ctx) {
+  return {type: BOOT, payload: ctx}
 }
 
 /**
@@ -40,3 +83,4 @@ function * drive (take, fn) {
  */
 
 export default driver
+export {next, NEXT, boot, BOOT}
