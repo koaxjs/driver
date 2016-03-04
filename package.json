@@ -2,7 +2,7 @@
   "name": "@koax/driver",
   "description": "Koax drivers.",
   "repository": "git://github.com/koaxjs/driver.git",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "license": "MIT",
   "main": "lib/index.js",
   "scripts": {
